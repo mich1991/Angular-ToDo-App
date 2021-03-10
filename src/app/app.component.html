@@ -6,19 +6,33 @@
   </nav>
 
   <div class="row">
-    <button class="btn col s2 offset-s10">Add Task</button>
-    <button class="btn col s2 offset-s10">Close</button>
+    <ng-container *ngIf="editMode; then editOn else editOff" ></ng-container>
+      <ng-template #editOn>
+        <button class="btn col s2 offset-s10" (click)="switchMode()" >Close</button>
+      </ng-template>
+
+      <ng-template #editOff>
+        <button class="btn col s2 offset-s10" (click)="switchMode()" >Add Task</button>
+      </ng-template>
   </div>
 
-  <div class="row">
-    <input class="col s8" type="text" placeholder="Dodaj zadanie i datę wykonania" />
-    <input class="col s2 disabled" type="date" />
-    <button class="btn-floating">+</button>
+  <div class="row" *ngIf="editMode" >
+    <input class="col s8" type="text" placeholder="Add task here..." 
+      [(ngModel)]="taskName"
+    />
+    <input class="col s2 disabled" type="date"
+      [(ngModel)]="taskDate"
+    />
+    
+    <button class="btn-floating" 
+      (click) = 'createTask();'
+      [disabled] = 'taskName ==="" || taskDate === ""'
+    >+</button>
   </div>
-
-  <ul class="collection">
-    <li class="collection-item row">
-      <span class="col s10">1 Work out - 11.07 Thursday</span>
+  
+  <ul class="collection" *ngIf="tasks.length > 0; else noTasks">
+    <li class="collection-item row" *ngFor="let task of tasks; let i = index">
+      <span class="col s10">{{i+1}}. {{task.name}} - {{task.deadline | date: 'd.MM EEEE'}}</span>
       <div class="col s2 right-align">
         <button class="btn-floating btn-small red">
           <i class="material-icons">remove</i>
@@ -32,10 +46,11 @@
       <span class="col done">Clean the bucket</span>
     </li>
   </ul>
+  <ng-template #noTasks>
+    <h1>No tasks for today:-)</h1>
+  </ng-template>
 
-  <h1>No tasks for today:-)</h1>
-
-  <button class="btn red">Clear</button>
+  <button class="btn red" (click)='clearTasks()' [disabled]="tasks.length === 0 ">Clear</button>
 
   <footer class="page-footer mt-5">
     <div class="footer-copyright">
