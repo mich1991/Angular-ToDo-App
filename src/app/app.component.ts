@@ -20,10 +20,15 @@ export class AppComponent {
     {
       name: "Cleaning",
       deadline: '2021-03-07',
-      done: false
+      done: true
     },
     {
       name: "Angular",
+      deadline: '2021-03-04',
+      done: false
+    },
+    {
+      name: "Clean the Bucket",
       deadline: '2021-03-04',
       done: false
     }
@@ -37,6 +42,7 @@ export class AppComponent {
         date: new Date()
       }
     }, 1000)
+    this.sortTasks()
   }
 
   clearTasks(){
@@ -52,8 +58,22 @@ export class AppComponent {
     this.tasks.push(task)
     this.taskName=''
     this.taskDate=''
+    this.sortTasks()
   }
   switchMode(){
     this.editMode = !this.editMode
+  }
+  markTaskAsDone(task: Task){
+    task.done = true
+    this.sortTasks()
+  }
+  deleteTask(task: Task){
+    this.tasks = this.tasks.filter(x => x !== task)
+    this.sortTasks()
+  }
+  private sortTasks(){
+    this.tasks = this.tasks.sort((a:Task, b:Task):number=> {
+      return a.done === b.done ? 0 : a.done ? 1:-1
+    }) 
   }
 }
